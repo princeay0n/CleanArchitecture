@@ -64,6 +64,33 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: src/Web/ClientApp/package-lock.json
+
+      - name: Build Web project
+        run: |
+          dotnet restore src/Web/Web.csproj
+          dotnet build src/Web/Web.csproj \
+            --configuration Release \
+            --no-restore
+
+      - name: Install frontend dependencies
+        working-directory: src/Web/ClientApp
+        run: npm ci
+
+      - name: Build Angular frontend
+        working-directory: src/Web/ClientApp
+        run: npm run build -- --configuration production
+
       - name: Show Git commit SHA
         run: |
           echo "Git SHA: ${GITHUB_SHA}"
@@ -78,7 +105,7 @@ jobs:
 
       - name: Show frontend Docker image
         run: |
-          docker images frontend:${GITHUB_SHA}            
+          docker images frontend:${GITHUB_SHA}         
             
   backend-image:
     name: Build Backend Docker Image
