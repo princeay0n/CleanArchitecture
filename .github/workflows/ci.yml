@@ -52,6 +52,34 @@ jobs:
             --no-build \
             --verbosity normal
             
+  frontend-image:
+    name: Build Frontend Docker Image
+    needs: build-and-test
+    runs-on: ubuntu-24.04
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Show Git commit SHA
+        run: |
+          echo "Git SHA: ${GITHUB_SHA}"
+          echo "Image: frontend:${GITHUB_SHA}"
+
+      - name: Build frontend Docker image
+        run: |
+          docker build \
+            --file Dockerfile.frontend \
+            --tag frontend:${GITHUB_SHA} \
+            .
+
+      - name: Show frontend Docker image
+        run: |
+          docker images frontend:${GITHUB_SHA}            
+            
   backend-image:
     name: Build Backend Docker Image
     needs: build-and-test
