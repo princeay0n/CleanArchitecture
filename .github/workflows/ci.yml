@@ -39,6 +39,11 @@ jobs:
           dotnet build CleanArchitecture.slnx \
             --configuration Release \
             --no-restore
+            
+      - name: Install Playwright Chromium
+        run: |
+          pwsh ./artifacts/bin/Web.AcceptanceTests/release/playwright.ps1 install --with-deps chromium            
+      
 
       - name: Run tests
         run: |
