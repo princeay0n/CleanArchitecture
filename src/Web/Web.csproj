@@ -37,7 +37,9 @@
   </ItemGroup>
 
   <!--#if (!UseApiOnly)-->
-  <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
+  <Target Name="PublishRunWebpack"
+        AfterTargets="ComputeFilesToPublish"
+        Condition="'$(SkipSpaBuild)' != 'true'">
     <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
     <!--#if (UseAngular)-->
