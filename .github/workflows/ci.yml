@@ -51,3 +51,31 @@ jobs:
             --configuration Release \
             --no-build \
             --verbosity normal
+            
+  backend-image:
+    name: Build Backend Docker Image
+    needs: build-and-test
+    runs-on: ubuntu-24.04
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Show Git commit SHA
+        run: |
+          echo "Git SHA: ${GITHUB_SHA}"
+          echo "Image: backend:${GITHUB_SHA}"
+
+      - name: Build backend Docker image
+        run: |
+          docker build \
+            --file Dockerfile.backend \
+            --tag backend:${GITHUB_SHA} \
+            .
+
+      - name: Show backend Docker image
+        run: |
+          docker images backend:${GITHUB_SHA}
