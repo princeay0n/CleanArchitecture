@@ -12,6 +12,29 @@ on:
   workflow_dispatch:
 
 jobs:
+  azure-oidc-test:
+    name: Test Azure OIDC Login
+    needs: build-and-test
+    runs-on: ubuntu-24.04
+
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Login to Azure using OIDC
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Verify Azure login
+        run: |
+          az account show \
+            --query "{Subscription:name,State:state}" \
+            --output table
+            
   build-and-test:
     name: Build and Test
     runs-on: ubuntu-24.04
