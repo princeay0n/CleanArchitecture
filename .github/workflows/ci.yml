@@ -22,6 +22,10 @@ jobs:
       id-token: write
 
     steps:
+      - name: Verify ACR variable
+        run: |
+          echo "ACR_NAME=${{ vars.ACR_NAME }}"    
+      
       - name: Login to Azure using OIDC
         uses: azure/login@v2
         with:
